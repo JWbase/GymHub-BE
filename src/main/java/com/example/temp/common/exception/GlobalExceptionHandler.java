@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -74,6 +75,12 @@ public class GlobalExceptionHandler {
     private FieldError getFirstFieldError(MethodArgumentNotValidException exception) {
         BindingResult bindingResult = exception.getBindingResult();
         return bindingResult.getFieldErrors().get(0);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException() {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(ErrorResponse.create(ErrorCode.RESOURCE_CONFLICT.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

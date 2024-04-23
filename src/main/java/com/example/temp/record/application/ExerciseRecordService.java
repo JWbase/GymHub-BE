@@ -40,12 +40,16 @@ public class ExerciseRecordService {
 
     @Transactional
     public long create(UserContext userContext, ExerciseRecordCreateRequest request) {
+        LocalDate now = LocalDate.now();
+        if (exerciseRecordRepository.alreadyExists(userContext.id(), now)) {
+            throw new ApiException(ErrorCode.RECORD_ALREADY_EXISTS);
+        }
         Member member = findMember(userContext);
         List<String> machineNames = request.tracks().stream()
             .map(TrackCreateRequest::machineName)
             .toList();
         Map<String, BodyPart> machineToMajorBodyPartMap = createMachineToMajorBodyPartMap(machineNames);
-        ExerciseRecord exerciseRecord = request.toEntityWith(member, machineToMajorBodyPartMap);
+        ExerciseRecord exerciseRecord = request.toEntityWith(member, machineToMajorBodyPartMap, now);
         exerciseRecordRepository.save(exerciseRecord);
         return exerciseRecord.getId();
     }

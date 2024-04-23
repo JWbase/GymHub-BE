@@ -10,10 +10,9 @@ import com.example.temp.member.domain.FollowStrategy;
 import com.example.temp.member.domain.Member;
 import com.example.temp.member.domain.PrivacyPolicy;
 import com.example.temp.member.domain.nickname.Nickname;
+import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,7 @@ class ExerciseRecordTest {
         Track track = createTrack("머신1");
 
         // when
-        ExerciseRecord exerciseRecord = ExerciseRecord.create(member, List.of(track));
+        ExerciseRecord exerciseRecord = ExerciseRecord.create(member, List.of(track), LocalDate.now());
 
         // then
         assertThat(exerciseRecord.getMember()).isEqualTo(member);
@@ -42,7 +41,7 @@ class ExerciseRecordTest {
         Member member = createMember("nick1");
 
         // when & then
-        assertThatThrownBy(() -> ExerciseRecord.create(member, Collections.emptyList()))
+        assertThatThrownBy(() -> ExerciseRecord.create(member, Collections.emptyList(), LocalDate.now()))
             .isInstanceOf(ApiException.class)
             .hasMessageContaining(ErrorCode.TRACK_CANT_EMPTY.getMessage());
     }
@@ -54,7 +53,7 @@ class ExerciseRecordTest {
         Member member = createMember("nick1");
 
         // when & then
-        assertThatThrownBy(() -> ExerciseRecord.create(member, null))
+        assertThatThrownBy(() -> ExerciseRecord.create(member, null, LocalDate.now()))
             .isInstanceOf(NullPointerException.class);
     }
 
@@ -88,7 +87,7 @@ class ExerciseRecordTest {
         // given
         Member member = createMember("nick1");
         Track track = createTrack("머신1");
-        ExerciseRecord original = ExerciseRecord.create(member, List.of(track));
+        ExerciseRecord original = ExerciseRecord.create(member, List.of(track), LocalDate.now());
         assertThat(original.isSnapshot()).isFalse();
 
         // when

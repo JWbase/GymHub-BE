@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,11 @@ public record ExerciseRecordCreateRequest(
     List<@Valid TrackCreateRequest> tracks
 ) {
 
-    public ExerciseRecord toEntityWith(Member member, Map<String, BodyPart> machineToMajorBodyPartMap) {
+    public ExerciseRecord toEntityWith(Member member, Map<String, BodyPart> machineToMajorBodyPartMap, LocalDate now) {
         List<Track> tracks = this.tracks.stream()
             .map(trackCreateRequest -> trackCreateRequest.toEntityUsing(machineToMajorBodyPartMap))
             .toList();
-        return ExerciseRecord.create(member, tracks);
+        return ExerciseRecord.create(member, tracks, now);
     }
 
     public record TrackCreateRequest(

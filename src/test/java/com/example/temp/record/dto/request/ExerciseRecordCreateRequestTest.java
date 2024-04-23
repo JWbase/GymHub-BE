@@ -8,6 +8,7 @@ import com.example.temp.record.domain.SetInTrack;
 import com.example.temp.record.domain.Track;
 import com.example.temp.record.dto.request.ExerciseRecordCreateRequest.TrackCreateRequest;
 import com.example.temp.record.dto.request.ExerciseRecordCreateRequest.TrackCreateRequest.SetInTrackCreateRequest;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -60,7 +61,7 @@ class ExerciseRecordCreateRequestTest {
         ExerciseRecordCreateRequest request = new ExerciseRecordCreateRequest(List.of(trackCreateRequest));
 
         // when
-        ExerciseRecord exerciseRecord = request.toEntityWith(null, new HashMap<>());
+        ExerciseRecord exerciseRecord = request.toEntityWith(null, new HashMap<>(), LocalDate.now());
 
         // then
         assertThat(exerciseRecord.getTracks()).hasSize(1)
