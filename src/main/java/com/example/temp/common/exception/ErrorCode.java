@@ -9,6 +9,7 @@ public enum ErrorCode {
     // 공통
     TEST(HttpStatus.BAD_REQUEST, "테스트용 예외 메시지입니다."),
     EXTENSION_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "해당 확장자는 지원하지 않습니다"),
+    RESOURCE_CONFLICT(HttpStatus.CONFLICT, "자원의 충돌이 일어났습니다."),
 
     // 인증
     AUTHENTICATED_FAIL(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
@@ -70,7 +71,8 @@ public enum ErrorCode {
     TRACK_CANT_EMPTY(HttpStatus.BAD_REQUEST, "운동기록 내 트랙은 최소 한 개 이상 존재해야 합니다."),
     SET_CANT_EMPTY(HttpStatus.BAD_REQUEST, "트랙 내 세트는 최소 한 개 이상 존재해야 합니다."),
     SET_WEIGHT_INVALID(HttpStatus.BAD_REQUEST, "세트의 무게는 0보다 커야 합니다."),
-    SET_REPEAT_CNT_INVALID(HttpStatus.BAD_REQUEST, "세트의 반복 횟수는 0보다 커야 합니다.");
+    SET_REPEAT_CNT_INVALID(HttpStatus.BAD_REQUEST, "세트의 반복 횟수는 0보다 커야 합니다."),
+    RECORD_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 날짜에 해당하는 운동 기록이 이미 존재합니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

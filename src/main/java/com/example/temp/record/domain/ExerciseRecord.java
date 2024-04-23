@@ -14,7 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "records")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ExerciseRecord extends BaseTimeEntity {
@@ -63,10 +61,10 @@ public class ExerciseRecord extends BaseTimeEntity {
         }
     }
 
-    public static ExerciseRecord create(Member member, List<Track> tracks) {
+    public static ExerciseRecord create(Member member, List<Track> tracks, LocalDate now) {
         return ExerciseRecord.builder()
             .member(member)
-            .recordDate(LocalDate.now())
+            .recordDate(now)
             .tracks(tracks)
             .isSnapshot(false)
             .build();

@@ -183,13 +183,13 @@ class ExerciseRecordServiceTest {
             exerciseRecordService.retrievePeriodExerciseRecords(loginUserContext, MonthlyDatePeriod.of(year, month));
 
         // then
-        int totalCntInMonth = LocalDate.of(year, month, 1).lengthOfMonth();
-        assertThat(response.results()).hasSize(totalCntInMonth);
+        assertThat(response.results()).hasSize(1);
         RetrievePeriodRecordsElement periodRecordsElement = response.results().stream()
             .filter(each -> each.date().equals(recordDate.toString()))
             .findAny()
             .get();
-        assertThat(periodRecordsElement.exerciseRecords()).isNotEmpty();
+        assertThat(periodRecordsElement.exerciseRecord().recordId()).isNotNull();
+        assertThat(periodRecordsElement.exerciseRecord().recordDate()).isEqualTo(recordDate);
     }
 
     @Test
@@ -203,14 +203,9 @@ class ExerciseRecordServiceTest {
         // when
         RetrievePeriodExerciseRecordsResponse response =
             exerciseRecordService.retrievePeriodExerciseRecords(loginUserContext, MonthlyDatePeriod.of(year, month));
+
         // then
-        int totalCntInMonth = LocalDate.of(year, month, 1).lengthOfMonth();
-        assertThat(response.results()).hasSize(totalCntInMonth);
-        RetrievePeriodRecordsElement periodRecordsElement = response.results().stream()
-            .filter(each -> each.date().equals(LocalDate.of(year, month, 1).toString()))
-            .findAny()
-            .get();
-        assertThat(periodRecordsElement.exerciseRecords()).isEmpty();
+        assertThat(response.results()).isEmpty();
     }
 
     @Test
@@ -228,13 +223,7 @@ class ExerciseRecordServiceTest {
             exerciseRecordService.retrievePeriodExerciseRecords(loginUserContext, MonthlyDatePeriod.of(year, month));
 
         // then
-        int totalCntInMonth = LocalDate.of(year, month, 1).lengthOfMonth();
-        assertThat(response.results()).hasSize(totalCntInMonth);
-        RetrievePeriodRecordsElement periodRecordsElement = response.results().stream()
-            .filter(each -> each.date().equals(recordDate.toString()))
-            .findAny()
-            .get();
-        assertThat(periodRecordsElement.exerciseRecords()).isEmpty();
+        assertThat(response.results()).isEmpty();
     }
 
     @Test

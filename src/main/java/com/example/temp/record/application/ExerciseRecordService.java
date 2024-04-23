@@ -19,7 +19,6 @@ import com.example.temp.record.dto.response.ExerciseRecordResponse;
 import com.example.temp.record.dto.response.RetrievePeriodExerciseRecordsResponse;
 import com.example.temp.record.dto.response.RetrieveRecordSnapshotsResponse;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +40,16 @@ public class ExerciseRecordService {
 
     @Transactional
     public long create(UserContext userContext, ExerciseRecordCreateRequest request) {
+        LocalDate now = LocalDate.now();
+        if (exerciseRecordRepository.alreadyExists(userContext.id(), now)) {
+            throw new ApiException(ErrorCode.RECORD_ALREADY_EXISTS);
+        }
         Member member = findMember(userContext);
         List<String> machineNames = request.tracks().stream()
             .map(TrackCreateRequest::machineName)
             .toList();
         Map<String, BodyPart> machineToMajorBodyPartMap = createMachineToMajorBodyPartMap(machineNames);
-        ExerciseRecord exerciseRecord = request.toEntityWith(member, machineToMajorBodyPartMap);
+        ExerciseRecord exerciseRecord = request.toEntityWith(member, machineToMajorBodyPartMap, now);
         exerciseRecordRepository.save(exerciseRecord);
         return exerciseRecord.getId();
     }
@@ -66,29 +69,15 @@ public class ExerciseRecordService {
             .map(ExerciseRecordResponse::from)
             .toList();
 
-        Map<LocalDate, List<ExerciseRecordResponse>> exerciseRecordMap = convertListToMapByDate(datePeriod,
-            exerciseRecords);
+        Map<LocalDate, ExerciseRecordResponse> exerciseRecordMap = convertListToMapByDate(exerciseRecords);
         return RetrievePeriodExerciseRecordsResponse.from(exerciseRecordMap);
     }
 
-    private Map<LocalDate, List<ExerciseRecordResponse>> convertListToMapByDate(DatePeriod datePeriod,
+    private Map<LocalDate, ExerciseRecordResponse> convertListToMapByDate(
         List<ExerciseRecordResponse> exerciseRecords) {
-        Map<LocalDate, List<ExerciseRecordResponse>> result = createInitStatusMapByDate(datePeriod);
+        Map<LocalDate, ExerciseRecordResponse> result = new HashMap<>();
         for (ExerciseRecordResponse exerciseRecord : exerciseRecords) {
-            if (!result.containsKey(exerciseRecord.recordDate())) {
-                throw new IllegalArgumentException("year와 month가 일치하지 않는 운동 결과가 발생했습니다.");
-            }
-            result.get(exerciseRecord.recordDate()).add(exerciseRecord);
-        }
-        return result;
-    }
-
-    private Map<LocalDate, List<ExerciseRecordResponse>> createInitStatusMapByDate(DatePeriod datePeriod) {
-        Map<LocalDate, List<ExerciseRecordResponse>> result = new HashMap<>();
-        LocalDate cursor = datePeriod.getStartDate();
-        while (!cursor.isAfter(datePeriod.getLastDate())) {
-            result.put(cursor, new ArrayList<>());
-            cursor = cursor.plusDays(1L);
+            result.put(exerciseRecord.recordDate(), exerciseRecord);
         }
         return result;
     }

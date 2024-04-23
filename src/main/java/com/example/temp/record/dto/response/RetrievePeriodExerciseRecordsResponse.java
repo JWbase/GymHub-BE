@@ -10,9 +10,9 @@ public record RetrievePeriodExerciseRecordsResponse(
     List<RetrievePeriodRecordsElement> results
 ) {
 
-    public static RetrievePeriodExerciseRecordsResponse from(Map<LocalDate, List<ExerciseRecordResponse>> result) {
+    public static RetrievePeriodExerciseRecordsResponse from(Map<LocalDate, ExerciseRecordResponse> result) {
         List<RetrievePeriodRecordsElement> results = new ArrayList<>();
-        for (Entry<LocalDate, List<ExerciseRecordResponse>> entry : result.entrySet()) {
+        for (Entry<LocalDate, ExerciseRecordResponse> entry : result.entrySet()) {
             results.add(RetrievePeriodRecordsElement.of(entry.getKey(), entry.getValue()));
         }
         return new RetrievePeriodExerciseRecordsResponse(results);
@@ -20,12 +20,12 @@ public record RetrievePeriodExerciseRecordsResponse(
 
     public record RetrievePeriodRecordsElement(
         String date,
-        List<ExerciseRecordResponse> exerciseRecords
+        ExerciseRecordResponse exerciseRecord
     ) {
 
         public static RetrievePeriodRecordsElement of(LocalDate localDate,
-            List<ExerciseRecordResponse> exerciseRecords) {
-            return new RetrievePeriodRecordsElement(localDate.toString(), exerciseRecords);
+            ExerciseRecordResponse exerciseRecord) {
+            return new RetrievePeriodRecordsElement(localDate.toString(), exerciseRecord);
         }
     }
 }

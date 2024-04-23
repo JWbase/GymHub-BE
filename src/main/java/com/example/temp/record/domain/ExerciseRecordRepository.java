@@ -40,4 +40,10 @@ public interface ExerciseRecordRepository extends JpaRepository<ExerciseRecord, 
         + "ORDER BY er.id DESC")
     Slice<ExerciseRecord> findNextSnapshotsByMember(@Param("lastId") Long lastId, Pageable pageable,
         @Param("member") Member member);
+
+    @Query("SELECT COUNT(er) > 0 FROM ExerciseRecord er "
+        + "WHERE er.member.id = :memberId "
+        + "AND er.recordDate = :now "
+        + "AND er.isSnapshot = false")
+    boolean alreadyExists(Long memberId, LocalDate now);
 }
