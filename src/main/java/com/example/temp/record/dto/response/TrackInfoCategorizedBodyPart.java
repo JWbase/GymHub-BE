@@ -19,17 +19,25 @@ public record TrackInfoCategorizedBodyPart(
 
     public record TrackSummary(
         String machineName,
-        int weight,
-        int repeat,
-        int set
+        List<SetInfo> setInfos
     ) {
 
         public static TrackSummary from(Track track) {
-            SetInTrack firstSet = track.getSetsInTrack().get(0);
-            return new TrackSummary(track.getMachineName(),
-                firstSet.getWeight(),
-                firstSet.getRepeatCnt(),
-                track.getSetsInTrack().size());
+            List<SetInfo> setInfos = track.getSetsInTrack().stream()
+                .map(SetInfo::from)
+                .toList();
+            return new TrackSummary(track.getMachineName(), setInfos);
+        }
+    }
+
+    public record SetInfo(
+        int order,
+        int weight,
+        int repeat
+    ) {
+
+        public static SetInfo from(SetInTrack setInTrack) {
+            return new SetInfo(setInTrack.getOrder(), setInTrack.getWeight(), setInTrack.getRepeatCnt());
         }
     }
 }
